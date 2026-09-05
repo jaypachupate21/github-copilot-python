@@ -6,13 +6,39 @@
   <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-  <h1>Sudoku Game</h1>
-  <div id="sudoku-board"></div>
-  <div class="controls">
-    <button id="new-game">New Game</button>
-    <button id="check-solution">Check Solution</button>
-    <span id="message"></span>
-  </div>
+  <main class="app-shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Logic practice</p>
+        <h1>Sudoku</h1>
+      </div>
+      <button id="theme-toggle" type="button">Dark mode</button>
+    </header>
+    <section class="game-layout">
+      <div class="game-panel">
+        <div class="game-toolbar">
+          <label for="difficulty">Difficulty</label>
+          <select id="difficulty">
+            <option value="easy">Easy</option>
+            <option value="medium" selected>Medium</option>
+            <option value="hard">Hard</option>
+          </select>
+          <span id="timer" aria-live="polite">00:00</span>
+        </div>
+        <div id="sudoku-board" role="grid" aria-label="Sudoku board"></div>
+        <p id="message" role="status" aria-live="polite"></p>
+        <div class="controls">
+          <button id="new-game" type="button">New game</button>
+          <button id="check-solution" type="button">Check</button>
+          <button id="hint" type="button">Hint</button>
+        </div>
+      </div>
+      <aside class="leaderboard-panel">
+        <h2>Top 10</h2>
+        <ol id="leaderboard"></ol>
+      </aside>
+    </section>
+  </main>
   <script src="/static/main.js"></script>
 </body>
 </html>
