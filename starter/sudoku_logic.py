@@ -25,13 +25,8 @@ def is_safe(board, row, col, num):
     return True
 
 def is_valid_board(board):
-    if not isinstance(board, list) or len(board) != SIZE:
+    if not is_well_formed_board(board):
         return False
-    for row in board:
-        if not isinstance(row, list) or len(row) != SIZE:
-            return False
-        if any(not isinstance(value, int) or value < EMPTY or value > SIZE for value in row):
-            return False
     for row in range(SIZE):
         values = [value for value in board[row] if value != EMPTY]
         if len(values) != len(set(values)):
@@ -51,6 +46,16 @@ def is_valid_board(board):
             if len(values) != len(set(values)):
                 return False
     return True
+
+def is_well_formed_board(board):
+    if not isinstance(board, list) or len(board) != SIZE:
+        return False
+    return all(
+        isinstance(row, list)
+        and len(row) == SIZE
+        and all(isinstance(value, int) and EMPTY <= value <= SIZE for value in row)
+        for row in board
+    )
 
 def fill_board(board):
     for row in range(SIZE):

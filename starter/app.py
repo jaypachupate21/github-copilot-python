@@ -32,7 +32,7 @@ def check_solution():
     solution = CURRENT.get('solution')
     if solution is None:
         return jsonify({'error': 'No game in progress'}), 400
-    if not sudoku_logic.is_valid_board(board):
+    if not sudoku_logic.is_well_formed_board(board):
         return jsonify({'error': 'Board must be a valid 9x9 grid containing numbers from 0 to 9'}), 400
     incorrect = []
     for i in range(sudoku_logic.SIZE):
@@ -49,7 +49,7 @@ def hint():
         return jsonify({'error': 'No game in progress'}), 400
     data = request.get_json(silent=True) or {}
     board = data.get('board')
-    if not sudoku_logic.is_valid_board(board):
+    if not sudoku_logic.is_well_formed_board(board):
         return jsonify({'error': 'Board must be a valid 9x9 grid containing numbers from 0 to 9'}), 400
     for row in range(sudoku_logic.SIZE):
         for col in range(sudoku_logic.SIZE):

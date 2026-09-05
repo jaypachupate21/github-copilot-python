@@ -6,6 +6,7 @@ let difficulty = 'medium';
 let startedAt = 0;
 let timerId = null;
 let solved = false;
+let hintsUsed = 0;
 
 function createBoardElement() {
   const boardDiv = document.getElementById('sudoku-board');
@@ -98,8 +99,6 @@ function checkConflict(row, col, value) {
   cell.classList.toggle('invalid-entry', conflicts.length > 0);
   return conflicts.length === 0;
 }
-.sudoku-cell.incorrect, .sudoku-cell.conflict, .sudoku-cell.invalid-entry { background: var(--error); }
-
 function formatTime(seconds) {
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
@@ -135,6 +134,7 @@ async function newGame() {
   const data = await res.json();
   if (!res.ok) return setMessage(data.error, 'error');
   solved = false;
+  hintsUsed = 0;
   renderPuzzle(data.puzzle);
   setMessage('');
   startTimer();
@@ -156,10 +156,9 @@ async function checkSolution() {
   const incorrect = new Set(data.incorrect.map(x => x[0]*SIZE + x[1]));
   for (let idx = 0; idx < inputs.length; idx++) {
     const inp = inputs[idx];
-    if (inp.disabled) continue;
-    inp.classList.remove('incorrect');
+    inp.classList.remove('incorrect', 'invalid-entry');
     if (incorrect.has(idx)) {
-      inp.classList.add('incorrect');
+      inp.classList.add('incorrect', 'invalid-entry');
     }
   }
   if (incorrect.size === 0) {
@@ -178,6 +177,7 @@ async function requestHint() {
   input.value = data.value;
   input.disabled = true;
   input.classList.add('hint');
+  hintsUsed += 1;
   setMessage('A correct cell was revealed.');
   checkComplete();
 }
@@ -193,7 +193,7 @@ function completeGame() {
   const seconds = Math.floor((Date.now() - startedAt) / 1000);
   setMessage(`Solved in ${formatTime(seconds)}. Enter your name to save your score.`, 'success');
   const name = window.prompt('Your name:');
-  if (name && name.trim()) saveScore(name.trim(), seconds);
+  if (name && name.trim()) saveScore(name.trim(), seconds, hintsUsed);
 }
 
 function loadScores() {
@@ -203,8 +203,8 @@ function loadScores() {
   } catch (error) { return []; }
 }
 
-function saveScore(name, time) {
-  const scores = [...loadScores(), {name, time, difficulty}].sort((a, b) => a.time - b.time).slice(0, 10);
+function saveScore(name, time, hints) {
+  const scores = [...loadScores(), {name, time, hints, difficulty}].sort((a, b) => a.time - b.time).slice(0, 10);
   localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(scores));
   renderLeaderboard();
 }
@@ -214,7 +214,8 @@ function renderLeaderboard() {
   list.replaceChildren();
   loadScores().forEach(score => {
     const item = document.createElement('li');
-    item.textContent = `${score.name} - ${formatTime(score.time)} (${score.difficulty})`;
+    const hints = Number.isFinite(score.hints) ? score.hints : 0;
+    item.textContent = `${score.name} - ${formatTime(score.time)} (${score.difficulty}, ${hints} hints)`;
     list.appendChild(item);
   });
 }

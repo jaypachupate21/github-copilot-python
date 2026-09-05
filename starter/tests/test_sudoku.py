@@ -1,7 +1,7 @@
 import sudoku_logic
 import pytest
 
-from app import app
+from app import CURRENT, app
 
 
 UNIQUE_PUZZLE = [
@@ -91,3 +91,28 @@ def test_board_shape_is_validated_by_routes(client):
     client.get('/new?difficulty=easy')
     response = client.post('/check', json={'board': [[0]]})
     assert response.status_code == 400
+
+
+def test_check_returns_all_wrong_cells_even_when_entries_conflict(client):
+    puzzle = client.get('/new?difficulty=easy').get_json()['puzzle']
+    board = [row[:] for row in puzzle]
+    editable = [
+        (row, col)
+        for row in range(sudoku_logic.SIZE)
+        for col in range(sudoku_logic.SIZE)
+        if puzzle[row][col] == 0
+    ]
+    first_row, first_col = editable[0]
+    second_row, second_col = editable[1]
+    board[first_row][first_col] = 1
+    board[second_row][second_col] = 1
+    response = client.post('/check', json={'board': board})
+    incorrect = {tuple(position) for position in response.get_json()['incorrect']}
+    expected = {
+        (row, col)
+        for row in range(sudoku_logic.SIZE)
+        for col in range(sudoku_logic.SIZE)
+        if board[row][col] != CURRENT['solution'][row][col]
+    }
+    assert response.status_code == 200
+    assert incorrect == expected

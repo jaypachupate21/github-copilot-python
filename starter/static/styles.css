@@ -47,11 +47,11 @@ button:hover, button:focus-visible { filter: brightness(1.12); }
 .sudoku-cell { width: 100%; min-width: 0; border: 1px solid var(--border); background: var(--cell); color: var(--text); text-align: center; font: 24px Georgia, serif; outline: none; }
 .box-shade { background: var(--box-shade-bg); }
 .box-plain { background: var(--box-plain-bg); }
+.sudoku-cell.incorrect, .sudoku-cell.conflict, .sudoku-cell.invalid-entry { background: var(--error); }
 .sudoku-cell:nth-child(3n) { border-right: 3px solid var(--text); }
 .sudoku-row:nth-child(3n) .sudoku-cell { border-bottom: 3px solid var(--text); }
 .sudoku-cell:focus { box-shadow: inset 0 0 0 3px var(--accent); }
 .sudoku-cell.prefilled { font-weight: 700; }
-.sudoku-cell.incorrect, .sudoku-cell.conflict, .sudoku-cell.invalid-entry { background: var(--error); }
 .sudoku-cell.hint { background: var(--hint); font-weight: 700; }
 .controls { justify-content: center; flex-wrap: wrap; }
 #message { min-height: 22px; margin: 0 0 16px; text-align: center; color: var(--muted); font: 14px Verdana, sans-serif; }
