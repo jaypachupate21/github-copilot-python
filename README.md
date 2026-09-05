@@ -1,60 +1,125 @@
-# Refactor a Sudoku Game written in Python Flask
+# Sudoku Game
 
-Use this simple Sudoku game as a starting point to practice your skills with GitHub Copilot. The goal is to refactor the code to use modern technologies, while also adding new features and improving the overall user experience.
+A Flask-powered Sudoku game with uniquely solvable puzzles, difficulty levels, hints, immediate move validation, a client-side timer, dark mode, and a persistent local leaderboard.
 
-## Getting Started
+Repository: <https://github.com/jaypachupate21/github-copilot-python>
 
-Follow these instructions to get a copy of the project up and running on your local machine.
+## Features
 
-### Dependencies
+- 9x9 Sudoku board with fixed clues and editable cells.
+- Easy, Medium, and Hard puzzles with 40, 32, and 26 clues respectively.
+- Puzzle generation that checks for exactly one valid solution.
+- Immediate row, column, and 3x3 region conflict feedback.
+- Check action that highlights entries that do not match the generated solution.
+- Hint action that fills and locks one correct editable cell.
+- Completion detection with elapsed time and optional player name.
+- Top 10 leaderboard stored in browser `localStorage`.
+- Persistent light/dark theme preference.
+- Responsive layout for desktop and mobile screens.
 
-```
-- Modern web browser (Chrome, Firefox, Edge, etc.)
-- Python 3
-```
+## Requirements
 
-### Installation
+- Python 3.10 or newer recommended.
+- A modern web browser.
 
-1. Fork this repository to your GitHub account. (You can use the "Fork" button on the top right corner of the repository page.)
+## Setup
 
-2. Clone your forked repository to your local machine.
-
-3. Open a terminal window and navigate to the "github-copilot-python/starter" directory.
-
-4. Create a Python virtual environment and activate it (optional but highly recommended).
+From the repository root, create and activate a virtual environment:
 
 ```bash
-python3 -m venv .venv
+cd github-copilot-python/starter
+python -m venv .venv
+```
+
+On macOS or Linux:
+
+```bash
 source .venv/bin/activate
 ```
 
-5. Install required Python packages.
+On Windows PowerShell:
 
-```bash
-pip install -r requirements.txt
+```powershell
+.venv\Scripts\Activate.ps1
 ```
 
-6. Run the Flask app.
+Install dependencies:
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+Start the application:
 
 ```bash
 python app.py
 ```
 
-7. Open http://127.0.0.1:5000 in your browser.
+Open <http://127.0.0.1:5000> in a browser.
 
-## Project Instructions
+## Testing
 
-Use GitHub Copilot to refactor the code for this game to add more advanced features. The goal is to create a more modern and maintainable codebase and add additional functionality to the final product. You can use any combination of code completion and chat features, like Ask, Edit, or Agent modes.
+Run the automated test suite from the `starter` directory:
 
-- Errors should be handled gracefully with appropriate messages to the user.
-- Implement a Sudoku board generator that creates a valid Sudoku puzzle with a unique solution.
-- Add a timer to track how long it takes to solve the puzzle.
-- Implement a solution checker that verifies if the user's solution is correct using event delegation.
-- Add a difficulty selector to allow users to choose between easy, medium, and hard puzzles.
-- Add a hint feature that provides clues for the user that are noted with unique colors.
-- Add a check puzzle button that checks the current state of the board against the solution.
-- User should get immediate feedback on their input, such as highlighting invalid entries.
-- Top 10 scores should be saved in local storage and displayed on the page with the user's name, time taken, hints used, and difficulty level.
-- The game should be responsive and work well on both desktop and mobile devices.
-- UI colors should be visually appealing and accessible.
-- Completed and correct puzzles should display a congratulatory message with the time taken and hints used and ask for the user's name for Top 10 times.
+```bash
+python -m pytest -q
+```
+
+The tests cover solution counting, invalid boards, puzzle generation, difficulty levels, Flask routes, hints, and malformed requests.
+
+## API Routes
+
+### `GET /`
+
+Serves the game interface.
+
+### `GET /new?difficulty=<level>`
+
+Starts a new game. Valid difficulty values are `easy`, `medium`, and `hard`.
+
+Example response:
+
+```json
+{
+	"difficulty": "medium",
+	"puzzle": [[0, 4, 0,  ...]]
+}
+```
+
+### `POST /check`
+
+Checks a board against the current solution.
+
+Request body:
+
+```json
+{
+	"board": [[0, 4, 0, ...]]
+}
+```
+
+The response contains the incorrect cell coordinates and a `complete` flag.
+
+### `POST /hint`
+
+Returns one correct value for an editable cell. The browser inserts the value and locks the cell as a hint. When no hint is available, the route returns a message instead.
+
+## Data and Privacy
+
+The current puzzle and solution are kept in server memory for the active Flask process. Leaderboard scores and the selected theme are stored only in the browser's `localStorage`; no user accounts or database are used.
+
+## Project Structure
+
+```text
+starter/
+	app.py                 Flask routes and application entry point
+	sudoku_logic.py        Board validation, solving, and puzzle generation
+	requirements.txt       Python dependencies
+	static/
+		main.js              Browser interaction, timer, theme, and leaderboard
+		styles.css            Responsive light/dark styling
+	templates/
+		index.html            Game page
+	tests/
+		test_sudoku.py       Automated backend and generator tests
+```
