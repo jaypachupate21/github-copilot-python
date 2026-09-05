@@ -27,8 +27,9 @@ function createBoardElement() {
       input.addEventListener('input', (e) => {
         const val = e.target.value.replace(/[^1-9]/g, '').slice(0, 1);
         e.target.value = val;
-        e.target.classList.remove('incorrect', 'conflict');
-        validateEntry(input);
+          document.querySelectorAll('.invalid-entry').forEach(cell => cell.classList.remove('invalid-entry'));
+          e.target.classList.remove('incorrect', 'conflict');
+          if (val) checkConflict(i, j, Number(val));
         checkComplete();
       });
       rowDiv.appendChild(input);
@@ -66,18 +67,38 @@ function boardValues() {
   }));
 }
 
-function validateEntry(input) {
-  if (!input.value) return;
-  const board = boardValues();
-  const row = Number(input.dataset.row);
-  const col = Number(input.dataset.col);
-  board[row][col] = 0;
-  const conflict = board[row].includes(Number(input.value)) || board.some(values => values[col] === Number(input.value));
+function getCellElement(row, col) {
+  return document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+}
+
+function findConflicts(board, row, col, value) {
+  const conflicts = [];
+  for (let index = 0; index < SIZE; index += 1) {
+    if (index !== col && board[row][index] === value) conflicts.push([row, index]);
+    if (index !== row && board[index][col] === value) conflicts.push([index, col]);
+  }
   const boxRow = Math.floor(row / 3) * 3;
   const boxCol = Math.floor(col / 3) * 3;
-  const boxValues = board.slice(boxRow, boxRow + 3).flatMap(values => values.slice(boxCol, boxCol + 3));
-  if (conflict || boxValues.includes(Number(input.value))) input.classList.add('conflict');
+  for (let boxRowIndex = boxRow; boxRowIndex < boxRow + 3; boxRowIndex += 1) {
+    for (let boxColIndex = boxCol; boxColIndex < boxCol + 3; boxColIndex += 1) {
+      if ((boxRowIndex !== row || boxColIndex !== col) && board[boxRowIndex][boxColIndex] === value) {
+        conflicts.push([boxRowIndex, boxColIndex]);
+      }
+    }
+  }
+  return conflicts;
 }
+
+function checkConflict(row, col, value) {
+  const conflicts = findConflicts(boardValues(), row, col, value);
+  conflicts.forEach(([conflictRow, conflictCol]) => {
+    getCellElement(conflictRow, conflictCol).classList.add('invalid-entry');
+  });
+  const cell = getCellElement(row, col);
+  cell.classList.toggle('invalid-entry', conflicts.length > 0);
+  return conflicts.length === 0;
+}
+.sudoku-cell.incorrect, .sudoku-cell.conflict, .sudoku-cell.invalid-entry { background: var(--error); }
 
 function formatTime(seconds) {
   const hours = Math.floor(seconds / 3600);
