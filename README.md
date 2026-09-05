@@ -1,55 +1,51 @@
 # Sudoku Game
 
-A Flask-powered Sudoku game with uniquely solvable puzzles, difficulty levels, hints, immediate move validation, a client-side timer, dark mode, and a persistent local leaderboard.
-
-Repository: <https://github.com/jaypachupate21/github-copilot-python>
+A Flask Sudoku game with generated puzzles, unique-solution validation, difficulty levels, hints, a timer, a local leaderboard, and light/dark themes.
 
 ## Features
 
-- 9x9 Sudoku board with fixed clues and editable cells.
+- 9x9 Sudoku board with locked puzzle clues.
 - Easy, Medium, and Hard puzzles with 40, 32, and 26 clues respectively.
-- Puzzle generation that checks for exactly one valid solution.
-- Immediate row, column, and 3x3 region conflict feedback.
-- Check action that highlights entries that do not match the generated solution.
-- Hint action that fills and locks one correct editable cell.
-- Completion detection with elapsed time and optional player name.
-- Top 10 leaderboard stored in browser `localStorage`.
-- Persistent light/dark theme preference.
+- Puzzle generation that accepts only puzzles with exactly one solution.
+- Row, column, and 3x3 region validation.
+- Immediate visual feedback for conflicting entries.
+- Check button for comparing entries with the generated solution.
+- Hint button that inserts and locks a correct value.
+- Client-side timer that stops when the puzzle is solved.
+- Top 10 leaderboard stored in browser `localStorage` under `sudokuLeaderboard`.
+- Persistent light/dark theme preference stored under `sudokuTheme`.
 - Responsive layout for desktop and mobile screens.
 
 ## Requirements
 
-- Python 3.10 or newer recommended.
-- A modern web browser.
+- Python 3.10 or newer
+- A modern web browser
 
 ## Setup
 
-From the repository root, create and activate a virtual environment:
+From the repository root, create and activate a virtual environment, then install the dependencies.
 
-```bash
-cd github-copilot-python/starter
-python -m venv .venv
-```
-
-On macOS or Linux:
-
-```bash
-source .venv/bin/activate
-```
-
-On Windows PowerShell:
+### Windows PowerShell
 
 ```powershell
-.venv\Scripts\Activate.ps1
-```
-
-Install dependencies:
-
-```bash
+cd starter
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
 ```
 
-Start the application:
+### macOS or Linux
+
+```bash
+cd starter
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+```
+
+## Run the application
+
+From the `starter` directory:
 
 ```bash
 python app.py
@@ -57,69 +53,78 @@ python app.py
 
 Open <http://127.0.0.1:5000> in a browser.
 
-## Testing
+## Run tests
 
-Run the automated test suite from the `starter` directory:
+From the `starter` directory:
 
 ```bash
 python -m pytest -q
 ```
 
-The tests cover solution counting, invalid boards, puzzle generation, difficulty levels, Flask routes, hints, and malformed requests.
+The test suite covers solution counting, invalid boards, generated puzzle uniqueness, clue counts, difficulty routes, checking, hints, and malformed requests.
 
-## API Routes
+## Project structure
+
+```text
+starter/
+	app.py                 Flask application and API routes
+	sudoku_logic.py        Board validation, solving, and puzzle generation
+	requirements.txt       Python dependencies
+	tests/test_sudoku.py   Automated tests
+	templates/index.html   Game markup
+	static/main.js         Board interaction and client-side game state
+	static/styles.css      Responsive light/dark styling
+```
+
+## API endpoints
 
 ### `GET /`
 
-Serves the game interface.
+Serves the game page.
 
 ### `GET /new?difficulty=<level>`
 
-Starts a new game. Valid difficulty values are `easy`, `medium`, and `hard`.
+Creates a new puzzle. Valid difficulty values are `easy`, `medium`, and `hard`.
 
 Example response:
 
 ```json
 {
 	"difficulty": "medium",
-	"puzzle": [[0, 4, 0,  ...]]
+	"puzzle": [[0, 0, 5,  ...]]
 }
 ```
 
 ### `POST /check`
 
-Checks a board against the current solution.
+Compares a submitted board with the current puzzle solution.
 
 Request body:
 
 ```json
 {
-	"board": [[0, 4, 0, ...]]
+	"board": [[0, 0, 5,  ...]]
 }
 ```
 
-The response contains the incorrect cell coordinates and a `complete` flag.
+The response includes `incorrect`, an array of incorrect `[row, column]` positions, and `complete`.
 
 ### `POST /hint`
 
-Returns one correct value for an editable cell. The browser inserts the value and locks the cell as a hint. When no hint is available, the route returns a message instead.
+Accepts the current board and returns one correct editable cell:
 
-## Data and Privacy
-
-The current puzzle and solution are kept in server memory for the active Flask process. Leaderboard scores and the selected theme are stored only in the browser's `localStorage`; no user accounts or database are used.
-
-## Project Structure
-
-```text
-starter/
-	app.py                 Flask routes and application entry point
-	sudoku_logic.py        Board validation, solving, and puzzle generation
-	requirements.txt       Python dependencies
-	static/
-		main.js              Browser interaction, timer, theme, and leaderboard
-		styles.css            Responsive light/dark styling
-	templates/
-		index.html            Game page
-	tests/
-		test_sudoku.py       Automated backend and generator tests
+```json
+{
+	"row": 0,
+	"col": 1,
+	"value": 7
+}
 ```
+
+The browser locks the returned cell after applying the hint. When no hint is available, the endpoint returns a message instead.
+
+## Notes
+
+- The current puzzle and solution are held in Flask memory, so restarting the server starts a new game state.
+- Leaderboard entries and theme preference are browser-local and are not shared between browsers or devices.
+- Player names are rendered with DOM text nodes rather than raw HTML.
