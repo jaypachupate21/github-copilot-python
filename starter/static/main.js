@@ -191,7 +191,7 @@ function completeGame() {
   solved = true;
   stopTimer();
   const seconds = Math.floor((Date.now() - startedAt) / 1000);
-  setMessage(`Solved in ${formatTime(seconds)}. Enter your name to save your score.`, 'success');
+  setMessage(`Solved in ${formatTime(seconds)} (${seconds} sec). Enter your name to save your score.`, 'success');
   const name = window.prompt('Your name:');
   if (name && name.trim()) saveScore(name.trim(), seconds, hintsUsed);
 }
@@ -215,7 +215,7 @@ function renderLeaderboard() {
   loadScores().forEach(score => {
     const item = document.createElement('li');
     const hints = Number.isFinite(score.hints) ? score.hints : 0;
-    item.textContent = `${score.name} - ${formatTime(score.time)} (${score.difficulty}, ${hints} hints)`;
+    item.textContent = `${score.name} - ${formatTime(score.time)} (${score.time} sec, ${score.difficulty}, ${hints} hints)`;
     list.appendChild(item);
   });
 }

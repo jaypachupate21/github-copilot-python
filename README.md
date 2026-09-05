@@ -12,6 +12,7 @@ A Flask Sudoku game with generated puzzles, unique-solution validation, difficul
 - Check button for comparing entries with the generated solution.
 - Hint button that inserts and locks a correct value.
 - Leaderboard entries include the number of hints used.
+- Leaderboard times are sorted and stored as seconds, and displayed as both `MM:SS` and total seconds.
 - Client-side timer that stops when the puzzle is solved.
 - Top 10 leaderboard stored in browser `localStorage` under `sudokuLeaderboard`.
 - Persistent light/dark theme preference stored under `sudokuTheme`.
