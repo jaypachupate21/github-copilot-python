@@ -20,6 +20,10 @@ function createBoardElement() {
       input.className = 'sudoku-cell';
       input.dataset.row = i;
       input.dataset.col = j;
+      const boxRow = Math.floor(i / 3);
+      const boxCol = Math.floor(j / 3);
+      const isShaded = (boxRow + boxCol) % 2 === 0;
+      input.classList.add(isShaded ? 'box-shade' : 'box-plain');
       input.addEventListener('input', (e) => {
         const val = e.target.value.replace(/[^1-9]/g, '').slice(0, 1);
         e.target.value = val;

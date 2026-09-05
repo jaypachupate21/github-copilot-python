@@ -2,7 +2,8 @@
     --background: #eef3f1;
     --panel: #ffffff;
     --cell: #f7faf8;
-    --box: #d4e5df;
+    --box-shade-bg: #d4e5df;
+    --box-plain-bg: #f7faf8;
     --text: #17332e;
     --muted: #61736e;
     --border: #b6c9c3;
@@ -15,7 +16,8 @@
     --background: #142321;
     --panel: #1d302c;
     --cell: #223a35;
-    --box: #345b50;
+    --box-shade-bg: #345b50;
+    --box-plain-bg: #223a35;
     --text: #edf7f3;
     --muted: #abc0b9;
     --border: #5b7c72;
@@ -43,11 +45,8 @@ button:hover, button:focus-visible { filter: brightness(1.12); }
 #sudoku-board { width: min(100%, 540px); aspect-ratio: 1; margin: 0 auto 18px; display: grid; grid-template-rows: repeat(9, 1fr); border: 3px solid var(--text); }
 .sudoku-row { display: grid; grid-template-columns: repeat(9, 1fr); min-height: 0; }
 .sudoku-cell { width: 100%; min-width: 0; border: 1px solid var(--border); background: var(--cell); color: var(--text); text-align: center; font: 24px Georgia, serif; outline: none; }
-.sudoku-row:nth-child(3n + 1) .sudoku-cell:nth-child(-n + 3),
-.sudoku-row:nth-child(3n + 1) .sudoku-cell:nth-child(n + 7),
-.sudoku-row:nth-child(3n + 2) .sudoku-cell:nth-child(n + 4):nth-child(-n + 6),
-.sudoku-row:nth-child(3n) .sudoku-cell:nth-child(-n + 3),
-.sudoku-row:nth-child(3n) .sudoku-cell:nth-child(n + 7) { background: var(--box); }
+.box-shade { background: var(--box-shade-bg); }
+.box-plain { background: var(--box-plain-bg); }
 .sudoku-cell:nth-child(3n) { border-right: 3px solid var(--text); }
 .sudoku-row:nth-child(3n) .sudoku-cell { border-bottom: 3px solid var(--text); }
 .sudoku-cell:focus { box-shadow: inset 0 0 0 3px var(--accent); }
