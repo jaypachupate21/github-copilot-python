@@ -56,11 +56,13 @@ Open <http://127.0.0.1:5000> in a browser.
 
 ## Run tests
 
-From the `starter` directory:
+From the repository root:
 
-```bash
+```powershell
 python -m pytest -q
 ```
+
+The same command can be run from the `starter` directory.
 
 The test suite covers solution counting, invalid boards, generated puzzle uniqueness, clue counts, difficulty routes, checking, hints, and malformed requests.
 
